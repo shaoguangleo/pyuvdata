@@ -544,7 +544,9 @@ class Miriad(UVData):
         except(KeyError):
             self.Ntimes = len(times)
 
-        self.time_array = t_grid
+        # UVData.time_array marks center of integration, while Miriad 'time' marks beginning
+        self.time_array = t_grid + uv['inttime'] / (24 * 3600.) / 2
+
         self.ant_1_array = ant_i_grid.astype(int)
         self.ant_2_array = ant_j_grid.astype(int)
 
@@ -706,6 +708,11 @@ class Miriad(UVData):
             no_antnums: Option to not write the antnums variable to the file.
                 Should only be used for testing purposes.
         """
+        # change time_array and lst_array to mark beginning of integration, per Miriad format
+        self.time_array -= self.integration_time / (24 * 3600.)  /2
+        if self.telescope_location is not None:
+            self.set_lsts_from_time_array()
+
         if run_check:
             self.check(check_extra=check_extra,
                        run_check_acceptability=run_check_acceptability)

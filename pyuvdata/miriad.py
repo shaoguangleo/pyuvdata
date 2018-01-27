@@ -676,7 +676,7 @@ class Miriad(UVData):
             blt_good = np.where(~np.all(self.flag_array, axis=(1, 2, 3)))
             if np.isclose(np.mean(np.diff(ra_list[blt_good])), 0.) and self.Ntimes > 1:
                 raise(ValueError, 'phase_type is "drift" but the RA values are constant.')
-            self.zenith_ra = ra_list
+            self.zenith_ra = copy.deepcopy(self.lst_array)
             self.zenith_dec = dec_list
 
         try:
